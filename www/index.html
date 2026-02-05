@@ -482,59 +482,72 @@
       state.textContent = 'Continuer ou charger un fichier'; unsaved=false;
     }
   }
-  async function saveFile(){
-    if(!unsaved){
-      showToast('Aucune modification à enregistrer', 'warn');
-      return { ok:false, reason:'no_changes' };
-    }
-    showOverlayWrap();
-    if(!generalValidNote()){hideOverlayWrap();return;}
-    try{
-      const dataForPapa = rowNotes.map(r => headers.map(h => r[h] ?? ''));
-      const csv = Papa.unparse({ fields: headers, data: dataForPapa }, { delimiter: CSV_DELIMITER, newline: '\n', quotes: true });
+async function saveFile() {
+  if (!unsaved) {
+    showToast('Aucune modification à enregistrer', 'warn');
+    return { ok: false, reason: 'no_changes' };
+  }
 
-      if(fileHandle && fileHandle.name && fileHandle.name.toLowerCase().endsWith('.zip')){
-        const origFile = await fileHandle.getFile();
-        const zip = await JSZip.loadAsync(origFile);
-        zip.file('mpr_notes.csv', csv);
+  showOverlayWrap();
 
-        if(zip.file('manifest.json')){
-          try{
-            const metaArr = await zip.file('manifest.json').async('arraybuffer');
-            const meta = JSON.parse(decodeCSV(metaArr));
-            meta.generatedAt = new Date().toISOString();
-            zip.file('manifest.json', JSON.stringify(meta, null, 2));
-          }catch(e){}
-        }
-        const newZipBlob = await zip.generateAsync({ type: 'blob' });
-        if(typeof fileHandle.createWritable === 'function'){
-          const writable = await fileHandle.createWritable();
-          try{
-            await writable.write(newZipBlob);
-            await writable.close();
-            unsaved = false; state.textContent = '✅Enregistré';
-            showToast('Enregistrement réussi', 'success');
-            // supprimer le brouillon 
-            const dk = getDraftKey();
-            if(dk) {
-              try{ await deleteDraft(dk); }catch(e){ console.warn('deleteDraft after save failed', e); }
-            }
-            return { ok:true, reason:'saved_zip' };
-          }catch(e){
-            try{ await writable.close(); }catch(_){}
-            throw e;
-          }
-        } else {
-            showToast('Echec enregistrement! Autorisation du navigateur requise! Recharger le même fichier! Si persistant changer de navigateur!', 'error',6000);
-        }
-      } else {
-        showToast('Echec enregistrement, recharger le même fichier', 'error');
-      }
-    }catch(e){
-      console.error('saveFile error', e);
-      showToast('Erreur écriture fichier', 'error');
-      return { ok:false, reason:'write_error', error: e };
-    } finally {hideOverlayWrap();}
+  try {
+    if (!generalValidNote()) return;
+
+    // CSV
+    const dataForPapa = rowNotes.map(r =>
+      headers.map(h => r[h] ?? '')
+    );
+
+    const csv = Papa.unparse(
+      { fields: headers, data: dataForPapa },
+      { delimiter: CSV_DELIMITER, newline: '\n', quotes: true }
+    );
+
+    // ZIP
+    const zip = new JSZip();
+    zip.file('mpr_notes.csv', csv);
+
+    const meta = {
+      generatedAt: new Date().toISOString(),
+      app: 'AdminSchool Mobile'
+    };
+    zip.file('manifest.json', JSON.stringify(meta, null, 2));
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const base64 = await blobToBase64(zipBlob);
+
+    const fileName = `save_${Date.now()}.zip`;
+
+    await Filesystem.writeFile({
+      path: `savesadminschool/${fileName}`,
+      data: base64,
+      directory: Directory.Documents
+    });
+
+    unsaved = false;
+    state.textContent = '✅ Enregistré';
+    showToast('Sauvegarde locale réussie', 'success');
+
+    return { ok: true, reason: 'saved' };
+
+  } catch (e) {
+    console.error(e);
+    showToast('Erreur sauvegarde', 'error');
+    return { ok: false, error: e };
+  } finally {
+    hideOverlayWrap();
+  }
+  }
+  
+  function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result.split(',')[1]);
+    };
+    reader.readAsDataURL(blob);
+  });
   }
   /* ---------- EXPORT subset ---------- */
   let parentDirHandle = null;
@@ -546,61 +559,58 @@
     const profnom = str.substring(str.indexOf('|')+2);
     return `Saisie_${dd}-${mm}-${yyyy}_${profnom.replace(/[^\p{L}]/gu,"_")}.csv`;
   }
-  async function exportNotesFolder(isdowlaod=false){
-    const fields = ['ideleve','idmatiere','fksequ','devoir11','devoir22','devoir33','componote','nbrenote','bloption'];
-    try{
-      if(!Array.isArray(rowNotes) || !rowNotes.length){
-        showToast('Pas de notes en mémoire à exporter', 'warn');
-        return;
-      }
-      if(!generalValidNote()){hideOverlayWrap();return;}
-      showOverlayWrap('Exportation en cours…');
-      const data = rowNotes.map(r => fields.map(f => r[f] ?? ''));
-      const csv = Papa.unparse({ fields, data }, { delimiter: CSV_DELIMITER, newline: '\n', quotes: true });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const exportName = buildExportName();
+  async function exportNotes() {
+  if (!Array.isArray(rowNotes) || !rowNotes.length) {
+    showToast('Pas de notes à exporter', 'warn');
+    return;
+  }
 
-      if(isdowlaod){
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = exportName;
-        document.body.appendChild(a); a.click(); 
-        setTimeout(() => {a.remove(); window.URL.revokeObjectURL(url);
-        }, 100); return;
-      }
-      if(parentDirHandle){
-        try{
-          const newFH = await parentDirHandle.getFileHandle(exportName, { create:true });
-          const writable = await newFH.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          showToast(`Export réussi />Dossier : ${parentDirHandle.name} />Fichier : ${exportName}`
-            ,'success',5000);
-          return;
-        }catch(e){
-          console.warn('write to parentDir failed, fallback to ask user', e);
-        }
-      }
-      if(typeof window.showDirectoryPicker === 'function'){
-        try{
-          const picked = await window.showDirectoryPicker();
-          const newFH = await picked.getFileHandle(exportName, { create:true });
-          const writable = await newFH.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          parentDirHandle = picked;
-          showToast(`Export réussi />Dossier : ${picked.name} />Fichier : ${exportName}`
-            ,'success',5000);
-          return;
-        }catch(e){
-          console.warn('User cancelled directory pick or write failed', e);
-          showToast('Annulation ou Erreur d\'export.','warn',5000);
-          if (e.name === 'AbortError') return;
-        }
-      }
-    }catch(err){
-      console.error('exportNotesSameFolder error', err);
-      showToast('Erreur lors de l\'export', 'error');
-    } finally {hideOverlayWrap();}
+  showOverlayWrap('Export en cours…');
+
+  try {
+    if (!generalValidNote()) return;
+
+    const fields = [
+      'ideleve','idmatiere','fksequ',
+      'devoir11','devoir22','devoir33',
+      'componote','nbrenote','bloption'
+    ];
+
+    const data = rowNotes.map(r =>
+      fields.map(f => r[f] ?? '')
+    );
+
+    const csv = Papa.unparse(
+      { fields, data },
+      { delimiter: CSV_DELIMITER, newline: '\n', quotes: true }
+    );
+
+    const fileName = buildExportName();
+    const base64 = btoa(unescape(encodeURIComponent(csv)));
+
+    const result = await Filesystem.writeFile({
+      path: `exportsadminschool/${fileName}`,
+      data: base64,
+      directory: Directory.Documents,
+      encoding: Encoding.UTF8
+    });
+
+    // Partage Android natif
+    await Share.share({
+      title: 'Exporter notes',
+      text: 'Fichier CSV des notes',
+      url: result.uri,
+      dialogTitle: 'Partager le fichier'
+    });
+
+    showToast('Export réussi', 'success');
+
+  } catch (e) {
+    console.error(e);
+    showToast('Erreur export', 'error');
+  } finally {
+    hideOverlayWrap();
+  }
   }
   /* ---------- INDEXEDDB handles storage ---------- */
   function openHandlesDB(){
