@@ -1,6 +1,5 @@
 {
   "appId": "com.aimekinda.monsite",
   "appName": "MProfSaisie",
-  "webDir": ".",
-  "bundledWebRuntime": false
+  "webDir": "."
 }
