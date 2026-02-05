@@ -83,6 +83,10 @@
 </script>
 <!-- js perso -->
 <script>
+  import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+  import { Share } from '@capacitor/share';
+  import { SplashScreen } from '@capacitor/splash-screen';
+  
   const CSV_DELIMITER = ';';
   const NOTE_FIELDS = ['devoir11','devoir22','devoir33'];const COMPO_FIELD = 'componote';
   const ID_FIELD = 'ideleve';const NOM_FIELD = 'nomel';const PRENOM_FIELD = 'prenomel';const GENRE_FIELD = 'genre';const OPTION_FIELD = 'bloption';
