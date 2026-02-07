@@ -1,7 +1,10 @@
 const CACHE_NAME = "adminv1-cache";
 const urlsToCache = [
   "./",
-  "./index.html"
+  "./index.html",
+  "./manifest.json",
+  "./logo192.PNG",
+  "./logo512.PNG" 
 ];
 
 self.addEventListener("install", event => {
