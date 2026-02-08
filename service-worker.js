@@ -1,5 +1,6 @@
 const CACHE_NAME = "adminv1-cache";
 const urlsToCache = [
+  "./",
   "./index.html",
   "./manifest.json",
   "./logo-192.png",
