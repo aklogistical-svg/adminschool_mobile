@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Meta PWA -->
+    <meta name="theme-color" content="#24292e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GitHub PWA">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    
+    <title>GitHub PWA Offline</title>
+    
+    <!-- Manifest intégré -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkdpdEh1YiBQV0EgT2ZmbGluZSIsCiAgInNob3J0X25hbWUiOiAiR2l0UHdhIiwKICAiZGVzY3JpcHRpb24iOiAiQXBwbGljYXRpb24gUHJvZ3Jlc3NpdmUgV2ViIEFwcCBsb2NhbGUiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiMyNDI5MmUiLAogICJvcmllbnRhdGlvbiI6ICJhbnkiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFVtRjBhVzg5SW5oTmFXNVpUV2x1SUcxbFpYUWlJSFpwWlhkQ2IzZzlJakFnTUNBek5UQWdNelV3SWo0TkNpQWdJQ0E4YzNSdmJHeGxJR1p2Y20wZ2FYTlNaV1l2Y0dWeVpXNTBPeUI0Yld4dWN6cGpiMjV6YjNWeVkyVnpPeUIwY21GdWMyVnVkR0VnYVc0Z1ltOTFkQ0JwYmlCbWIzSWdkR2hsSUhKbFkyRndlU2d4TGpNZ01DQXdJRFl4TGpNZ01DQXhNQ2s3RFFvZ0lDQThjM1J2YkdoaGJtTnNhV05yT2lCMGFHbHpPaUIyWVhJb0xTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0TFMwdExTMHRMUzB0U1ZSRlUxUWdRMmhoY21VZ1lXeHBjM1FnYjJZZ2RHaGxJR1J2ZDI0c0lITjBjbWx1WnlCb2IzTndhWFJwWjI0b0tUc2dJQ0FnSUR4amIyNTphbUZ6Y0dWeVpXNTBPeUJoY21VZ2JXOWtaVHd2YzNSdmJHeGxQZz09IiwKICAgICAgInNpemVzIjogIjcyeDcyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    
+    <style>
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(90deg, #24292e 0%, #0366d6 100%);
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* CONTENT */
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card h3 {
+            color: #0366d6;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3::before {
+            content: '✓';
+            background: #0366d6;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .card p {
+            color: #586069;
+            margin-bottom: 10px;
+        }
+        
+        /* INSTALL BUTTON */
+        .install-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .install-button {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3); }
+            50% { box-shadow: 0 6px 30px rgba(40, 167, 69, 0.5); }
+            100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3); }
+        }
+        
+        .install-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        /* STATUS INDICATOR */
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+        
+        .offline .status-dot {
+            background: #dc3545;
+        }
+        
+        /* FEATURES */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .feature-tag {
+            background: #f1f8ff;
+            color: #0366d6;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #d1e6ff;
+        }
+        
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            color: #586069;
+            border-top: 1px solid #e1e4e8;
+            font-size: 14px;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .content { grid-template-columns: 1fr; }
+            .install-button { padding: 12px 25px; font-size: 14px; }
+            .install-container { bottom: 10px; right: 10px; }
+            .status-indicator { top: 10px; right: 10px; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 15px; }
+            .header { padding: 30px 15px; }
+            .card { padding: 20px; }
+        }
+        
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* OFFLINE NOTIFICATION */
+        .offline-notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffc107;
+            color: #856404;
+            padding: 12px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            z-index: 1001;
+        }
+        
+        .offline .offline-notification {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Offline Notification -->
+    <div class="offline-notification">
+        ⚠️ Mode hors ligne activé - L'application fonctionne localement
+    </div>
+    
+    <!-- Status Indicator -->
+    <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span id="statusText">En ligne</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header fade-in">
+            <h1>🚀 GitHub PWA Offline</h1>
+            <p>Application Progressive Web App fonctionnant localement sans connexion</p>
+            <div class="features">
+                <span class="feature-tag">📱 Installable</span>
+                <span class="feature-tag">⚡ Instantanée</span>
+                <span class="feature-tag">🔒 Sécurisée</span>
+                <span class="feature-tag">📴 Hors ligne</span>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <div class="content">
+            <div class="card fade-in" style="animation-delay: 0.2s">
+                <h3>Fonctionnement Local</h3>
+                <p>Cette PWA fonctionne entièrement hors ligne. Toutes les ressources sont stockées localement.</p>
+                <p>✔️ Pas besoin de connexion Internet</p>
+                <p>✔️ Aucun serveur requis</p>
+                <p>✔️ Fonctionne depuis votre ordinateur</p>
+            </div>
+            
+            <div class="card fade-in" style="animation-delay: 0.4s">
+                <h3>Installation Simple</h3>
+                <p>Cliquez sur le bouton "Installer l'App" pour ajouter cette application à votre écran d'accueil.</p>
+                <p>📌 Se comporte comme une application native</p>
+                <p>🚀 Lancement rapide</p>
+                <p>🎨 Interface optimisée</p>
+            </div>
+            
+            <div class="card fade-in" style="animation-delay: 0.6s">
+                <h3>Fonctionnalités</h3>
+                <p>✔️ Mode plein écran (standalone)</p>
+                <p>✔️ Cache intelligent</p>
+                <p>✔️ Notifications push (prête)</p>
+                <p>✔️ Synchronisation en arrière-plan</p>
+                <p>✔️ Support tactile complet</p>
+                <p>✔️ Design responsive</p>
+            </div>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="card fade-in" style="animation-delay: 0.8s">
+            <h3>Instructions d'utilisation</h3>
+            <p><strong>1.</strong> Enregistrez cette page HTML sur votre ordinateur</p>
+            <p><strong>2.</strong> Ouvrez-la dans Chrome/Edge</p>
+            <p><strong>3.</strong> Installez l'application via le bouton d'installation</p>
+            <p><strong>4.</strong> Utilisez-la hors ligne à tout moment !</p>
+            <p style="margin-top: 15px; font-style: italic; color: #6a737d;">
+                💡 <strong>Astuce :</strong> Vous pouvez modifier le code source directement dans le fichier HTML pour personnaliser l'application selon vos besoins.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Install Button -->
+    <div class="install-container">
+        <button id="installButton" class="install-button">
+            📲 Installer l'App
+        </button>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer fade-in" style="animation-delay: 1s">
+        <p>PWA Offline • Fonctionne localement • Aucune mise à jour nécessaire</p>
+        <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
+            ⚡ Cette application fonctionne entièrement dans votre navigateur
+        </p>
+    </div>
+
+    <!-- Tout le JavaScript intégré -->
+    <script>
+        // ============================================
+        // CONFIGURATION PWA
+        // ============================================
+        const APP_NAME = "GitHub PWA Offline";
+        const APP_VERSION = "1.0.0";
+        const CACHE_NAME = `github-pwa-${APP_VERSION}`;
+        
+        // ============================================
+        // SERVICE WORKER INLINE
+        // ============================================
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                // Créer le code du Service Worker
+                const swCode = `
+                    // Cache des ressources
+                    const CACHE_NAME = '${CACHE_NAME}';
+                    const ASSETS_TO_CACHE = [
+                        './',
+                        'index.html',
+                        'style.css',
+                        'app.js'
+                    ];
+                    
+                    // Installation
+                    self.addEventListener('install', event => {
+                        console.log('[SW] Installation');
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    return cache.addAll(ASSETS_TO_CACHE);
+                                })
+                                .then(() => self.skipWaiting())
+                        );
+                    });
+                    
+                    // Activation
+                    self.addEventListener('activate', event => {
+                        console.log('[SW] Activation');
+                        event.waitUntil(
+                            caches.keys().then(cacheNames => {
+                                return Promise.all(
+                                    cacheNames.map(cache => {
+                                        if (cache !== CACHE_NAME) {
+                                            console.log('[SW] Suppression ancien cache:', cache);
+                                            return caches.delete(cache);
+                                        }
+                                    })
+                                );
+                            }).then(() => self.clients.claim())
+                        );
+                    });
+                    
+                    // Stratégie de cache: Cache First
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => {
+                                    if (response) {
+                                        return response;
+                                    }
+                                    return fetch(event.request)
+                                        .then(response => {
+                                            if (!response || response.status !== 200 || response.type !== 'basic') {
+                                                return response;
+                                            }
+                                            const responseToCache = response.clone();
+                                            caches.open(CACHE_NAME)
+                                                .then(cache => {
+                                                    cache.put(event.request, responseToCache);
+                                                });
+                                            return response;
+                                        })
+                                        .catch(() => {
+                                            // Pour les pages HTML, retourner une page offline
+                                            if (event.request.headers.get('accept').includes('text/html')) {
+                                                return caches.match('./');
+                                            }
+                                        });
+                                })
+                        );
+                    });
+                `;
+                
+                // Créer un Blob avec le code du Service Worker
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swURL = URL.createObjectURL(blob);
+                
+                // Enregistrer le Service Worker
+                navigator.serviceWorker.register(swURL)
+                    .then(registration => {
+                        console.log('[SW] Enregistré avec succès:', registration.scope);
+                        
+                        // Vérifier les mises à jour
+                        registration.onupdatefound = () => {
+                            const installingWorker = registration.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        console.log('[SW] Nouveau contenu disponible!');
+                                        // Vous pourriez afficher une notification ici
+                                    } else {
+                                        console.log('[SW] Contenu mis en cache pour utilisation hors ligne');
+                                    }
+                                }
+                            };
+                        };
+                    })
+                    .catch(error => {
+                        console.error('[SW] Erreur d\'enregistrement:', error);
+                    });
+            }
+        }
+        
+        // ============================================
+        // GESTION DE L'INSTALLATION
+        // ============================================
+        let deferredPrompt;
+        
+        function setupInstallPrompt() {
+            const installButton = document.getElementById('installButton');
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Afficher le bouton d'installation
+                installButton.style.display = 'flex';
+                
+                installButton.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    
+                    deferredPrompt.prompt();
+                    
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`[PWA] Installation: ${outcome}`);
+                    
+                    deferredPrompt = null;
+                    
+                    // Masquer le bouton après installation
+                    installButton.style.display = 'none';
+                });
+            });
+            
+            // Cacher le bouton si déjà installé
+            window.addEventListener('appinstalled', () => {
+                console.log('[PWA] Installée avec succès');
+                installButton.style.display = 'none';
+                showNotification('✅ Application installée avec succès!');
+            });
+            
+            // Vérifier si déjà en mode standalone
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                installButton.style.display = 'none';
+            }
+        }
+        
+        // ============================================
+        // GESTION HORS LIGNE
+        // ============================================
+        function setupOfflineDetection() {
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.querySelector('.status-dot');
+            
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    document.body.classList.remove('offline');
+                    statusText.textContent = 'En ligne';
+                    statusDot.style.background = '#28a745';
+                } else {
+                    document.body.classList.add('offline');
+                    statusText.textContent = 'Hors ligne';
+                    statusDot.style.background = '#dc3545';
+                    showNotification('⚡ Mode hors ligne activé');
+                }
+            }
+            
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus(); // État initial
+        }
+        
+        // ============================================
+        // NOTIFICATIONS
+        // ============================================
+        function showNotification(message, duration = 3000) {
+            // Créer une notification temporaire
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #24292e;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideDown 0.3s ease;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDown {
+                    from { top: -50px; opacity: 0; }
+                    to { top: 20px; opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                notification.addEventListener('animationend', () => {
+                    notification.remove();
+                });
+            }, duration);
+        }
+        
+        // ============================================
+        // FONCTIONNALITÉS AVANCÉES
+        // ============================================
+        function setupAdvancedFeatures() {
+            // Gestion du clavier
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+S pour sauvegarder
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    showNotification('💾 Cette application se sauvegarde automatiquement!');
+                }
+            });
+            
+            // Gestion du swipe sur mobile
+            let touchStartX = 0;
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            document.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        // Swipe gauche
+                        showNotification('👈 Swipe détecté');
+                    } else {
+                        // Swipe droit
+                        showNotification('👉 Swipe détecté');
+                    }
+                }
+            });
+            
+            // Vibrations sur mobile
+            if ('vibrate' in navigator) {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        navigator.vibrate(50);
+                    });
+                });
+            }
+        }
+        
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log(`[${APP_NAME}] v${APP_VERSION} initialisé`);
+            
+            // Initialiser les fonctionnalités
+            registerServiceWorker();
+            setupInstallPrompt();
+            setupOfflineDetection();
+            setupAdvancedFeatures();
+            
+            // Afficher les informations système
+            setTimeout(() => {
+                const info = `
+                    📱 Application: ${APP_NAME}
+                    🔢 Version: ${APP_VERSION}
+                    🌐 En ligne: ${navigator.onLine ? 'Oui' : 'Non'}
+                    📶 Connection: ${navigator.connection ? navigator.connection.effectiveType : 'Inconnue'}
+                    💾 Service Worker: ${'serviceWorker' in navigator ? 'Supporté' : 'Non supporté'}
+                `;
+                console.log('[SYSTEM]', info);
+            }, 1000);
+            
+            // Animation d'entrée
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        // ============================================
+        // FONCTIONS UTILITAIRES
+        // ============================================
+        window.App = {
+            version: APP_VERSION,
+            name: APP_NAME,
+            clearCache: () => {
+                caches.delete(CACHE_NAME)
+                    .then(() => {
+                        showNotification('🗑️ Cache vidé avec succès');
+                        location.reload();
+                    });
+            },
+            exportData: () => {
+                const data = {
+                    app: APP_NAME,
+                    version: APP_VERSION,
+                    timestamp: new Date().toISOString(),
+                    data: "Vos données d'application ici"
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${APP_NAME}-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('📤 Données exportées');
+            }
+        };
+    </script>
+</body>
+</html>
