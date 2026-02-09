@@ -59,6 +59,9 @@
 <div id="permiOverlay" hidden>
   <button id="btnGrant">Autoriser l’accès au fichier</button>
 </div>
+  <button id="installBtn" style="display:none;">
+  Installer l'application
+  </button>
 <div id="guideModal" class="modalg">
   <div class="modal-content">
     <span class="closeg">&times;</span>
@@ -813,6 +816,32 @@
   /* ---------- RESTORE ONLOAD- BEFORE UNLOAD ---------- */
   window.addEventListener('load', ()=> tryAutoRestore());
   window.onbeforeunload = e => {if(unsaved){e.preventDefault();e.returnValue = '';}};
+  
+  let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // Afficher ton bouton installer
+  const installBtn = document.getElementById("installBtn");
+  installBtn.style.display = "block";
+});
+
+document.getElementById("installBtn").addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+
+  const choice = await deferredPrompt.userChoice;
+
+  if (choice.outcome === "accepted") {
+    console.log("Installation acceptée");
+  } else {
+    console.log("Installation refusée");
+  }
+
+  deferredPrompt = null;
+});
   if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js")
     .then(() => console.log("Service Worker enregistré"))
