@@ -2,15 +2,15 @@
    CONFIGURATION
 =========================== */
 
-const CACHE_VERSION = "v1.0.0";
+const CACHE_VERSION = "v2.1.1";
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./logo-192.png",
-  "./logo-512.png",
+  "./icon-192.png",
+  "./icon-512.png",
   "./manifest.json"
 ];
 
